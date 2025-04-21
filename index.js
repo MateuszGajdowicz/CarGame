@@ -3,6 +3,8 @@ let GameContainer = document.getElementsByClassName('GameContainer')[0];
 let Score = document.getElementById("Score");
 let MagazineContainer = document.getElementById("Magazine");
 let LivesContainer = document.getElementById("Lives");
+let Obstacles = document.getElementsByClassName('Obstacle');
+
 
 let ShipMoveSpeed = 5;
 let ShipHorizontalPosition = 300;
@@ -74,6 +76,7 @@ const LoadMagazine = setInterval(()=>{
 
 document.addEventListener('keydown', ShootBullet);
 
+let ObstacleSpeed = 50;
 function CreateObstacles(){
     let RandomObstacleHorizontal = Math.floor(Math.random()*550);
     let Obstacle = document.createElement('div');
@@ -90,7 +93,7 @@ function CreateObstacles(){
             Obstacle.remove();
         }
 
-    },50
+    },ObstacleSpeed
     )
     CheckLoss();
 
@@ -98,12 +101,11 @@ function CreateObstacles(){
     
      
 }
-setInterval(CreateObstacles, 1000)
+let CreateObstacle =setInterval(CreateObstacles, 500)
 
 let Counter = 0;
 function CheckCollision(bullet, Interval){
 
-    let Obstacles = document.getElementsByClassName('Obstacle');
     for(let i=0; i<Obstacles.length; i++){
         let Obstacle = Obstacles[i];
 
@@ -122,7 +124,19 @@ function CheckCollision(bullet, Interval){
             bullet.remove();
             clearInterval(Interval);    
             Score.textContent = `Twój wynik to: ${Counter}`;
+            CreateBoss();
             
+        }
+        if(Counter>=10){
+            ObstacleSpeed   = 40;
+        }
+        else if(Counter>=20){
+            ObstacleSpeed = 30;
+
+        }
+        else if(Counter>=30){
+            ObstacleSpeed = 20;
+
         }
 
     }
@@ -131,7 +145,6 @@ function CheckCollision(bullet, Interval){
 
 let Lives = 3;
 function CheckLoss(Interval){
-    let Obstacles = document.getElementsByClassName('Obstacle');
     for(let i=0;i<Obstacles.length;i++){
         let Obstacle = Obstacles[i];
         let ObstacleRect = Obstacle.getBoundingClientRect();
@@ -157,4 +170,31 @@ function CheckLoss(Interval){
 
 
     }
+}
+let BossSpeed = 1000;
+function CreateBoss(){
+    if(Counter%2===0 && Counter!==0){
+        for(let i=0;i<Obstacles.length;i++){
+            let Obstacle = Obstacles[i];
+            Obstacle.remove();
+            clearInterval(CreateObstacle)
+            
+        }
+        let RandomHorizontalBoss = Math.floor(Math.random()*550);
+        let BossObstacle = document.createElement('div');
+        BossObstacle.classList.add('Boss');
+        GameContainer.appendChild(BossObstacle);
+        let BossVerticalPosition = 0;
+        BossObstacle.style.top= `${BossVerticalPosition}px`;
+        BossObstacle.style.left = `${RandomHorizontalBoss}px`
+        let BossInterval = setInterval(()=>{
+            BossVerticalPosition+=5;
+            BossObstacle.style.top = `${BossVerticalPosition}px`
+        
+        },100)
+
+    }
+    
+
+
 }
